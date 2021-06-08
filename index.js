@@ -1,24 +1,29 @@
+// micro-bot
 const { Composer } = require('micro-bot');
 const bot = new Composer();
+
+// puppeteer
 const ss = require('./puppeteer');
 
-const helpMessage = `
+// message
+const msg = new Object();
+msg.incorrectMessage = `The URL you entered is incorrect 😩\nmake sure the url you enter is correct and repeat again 👌😬`;
+msg.waitMessage = "Wait a minute, it won't be long 😬";
+msg.helpMessage = `
 
-Bot ini akan mengambil tangkapan layar (screenshot) dari link yang kamu masukkan.
+I will take a screenshot of the link you entered.
 
-Contoh: /link google.com
+You can control me by sending these commands:
 
-Command yang dapat digunakan:
+/link _url_
 
-/start - Start bot
-/link {input} - Get screenshot
-/stop - Stop bot
+e.g. /link google.com
 
 `;
 
 // /start
 bot.start((ctx) => {
-   ctx.reply(`Hai, ${ctx.from.first_name}! 👏 ${helpMessage}`);
+   ctx.reply(`Hi, ${ctx.from.first_name}! 👏 ${msg.helpMessage}`);
 });
 
 // /link
@@ -28,9 +33,9 @@ bot.command('link', (ctx) => {
    let link = '';
 
    if (inputArr.length == 1) {
-      link = 'Masukkan URL setelah /link \nContoh: /link google.com';
+      link = 'Enter the URL after /link command\nExample: /link google.com';
    } else {
-      ctx.reply('Tunggu sebentar ya 😬');
+      ctx.reply(msg.waitMessage);
       inputArr.shift();
       link = inputArr.join(' ');
 
@@ -45,19 +50,17 @@ bot.command('link', (ctx) => {
             ctx.replyWithPhoto({ source: img });
          })
          .catch(() => {
-            ctx.reply('URL yang anda masukkan salah 😩\nUlangi lagi 👌😬');
+            ctx.reply(msg.incorrectMessage);
          });
    }
 });
 
-// help
-bot.help((ctx) => {
-   ctx.reply(helpMessage);
+bot.on('text', (ctx) => {
+   ctx.reply('Enter the URL after /link command\nExample: /link google.com');
 });
 
-// /settings
-bot.settings((ctx) => {
-   ctx.reply('Welcome');
+bot.on('sticker', (ctx) => {
+   ctx.reply('Enter the URL after /link command\nExample: /link google.com');
 });
 
 module.exports = bot;
